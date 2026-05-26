@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Posts para LinkedIn con IA — Gratis | PostIA</title>
+<meta name="description" content="Crea posts profesionales para LinkedIn en segundos con inteligencia artificial. Gratis, sin registro. Elige el tono, sector y genera contenido que engancha.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #f3f2ef; color: #1a1a1a; min-height: 100vh; }
+
+nav { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 0 2rem; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.nav-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 16px; color: #0a66c2; text-decoration: none; }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-badge { font-size: 11px; background: #e8f0fb; color: #0a66c2; padding: 4px 10px; border-radius: 20px; font-weight: 600; }
+.nav-link { font-size: 13px; color: #555; text-decoration: none; font-weight: 500; }
+.nav-link:hover { color: #0a66c2; }
+
+.ad { background: #e8e8e8; border: 1px dashed #bbb; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; letter-spacing: 0.05em; text-align: center; line-height: 1.6; }
+.ad-leaderboard { height: 90px; width: 100%; }
+.ad-banner-mid { height: 90px; width: 100%; border-radius: 8px; }
+.ad-inline { height: 100px; width: 100%; border-radius: 8px; margin-top: 1rem; }
+.ad-small { height: 120px; width: 100%; border-radius: 8px; margin: 8px 0; }
+.ad-rect { height: 250px; width: 100%; border-radius: 10px; }
+.ad-half-page { height: 600px; width: 100%; border-radius: 10px; }
+.ad-skyscraper { width: 160px; min-height: 600px; border-radius: 8px; flex-shrink: 0; }
+
+/* OUTER LAYOUT con columnas laterales */
+.outer { display: grid; grid-template-columns: 160px 1fr 160px; max-width: 1280px; margin: 0 auto; gap: 0; }
+.outer-left { padding: 1.5rem 1rem 1.5rem 0.5rem; display: flex; flex-direction: column; gap: 1rem; }
+.outer-right { padding: 1.5rem 0.5rem 1.5rem 1rem; display: flex; flex-direction: column; gap: 1rem; }
+.outer-main { min-width: 0; }
+
+.hero { background: linear-gradient(135deg, #0a66c2 0%, #004182 100%); color: #fff; padding: 3rem 2rem 2.5rem; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content:''; position:absolute; top:-60px; right:-60px; width:300px; height:300px; background:rgba(255,255,255,0.04); border-radius:50%; }
+.hero h1 { font-size: clamp(22px,4vw,36px); font-weight: 700; line-height: 1.2; margin-bottom: 12px; position: relative; }
+.hero h1 span { color: #7fc4fd; }
+.hero p { font-size: 15px; opacity: 0.85; max-width: 500px; margin: 0 auto 2rem; line-height: 1.6; position: relative; }
+.hero-stats { display: flex; justify-content: center; max-width: 420px; margin: 0 auto; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; }
+.stat { flex:1; padding:14px 8px; text-align:center; border-right:1px solid rgba(255,255,255,0.15); }
+.stat:last-child { border-right: none; }
+.stat-num { font-size: 20px; font-weight: 700; }
+.stat-label { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+.page { max-width: 920px; margin: 0 auto; padding: 2rem 1rem; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem; }
+.main-col { display: flex; flex-direction: column; gap: 1rem; }
+
+.features { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 1rem; }
+.feature { background:#fff; border-radius:12px; padding:1.25rem; border:1px solid #e0e0e0; text-align:center; }
+.feature-icon { font-size:24px; margin-bottom:8px; }
+.feature-title { font-size:13px; font-weight:700; color:#1a1a1a; margin-bottom:4px; }
+.feature-desc { font-size:12px; color:#777; line-height:1.5; }
+
+.card { background:#fff; border-radius:12px; padding:1.5rem; border:1px solid #e0e0e0; }
+.card-title { font-size:15px; font-weight:600; margin-bottom:1.25rem; color:#1a1a1a; display:flex; align-items:center; gap:8px; }
+
+label { display:block; font-size:13px; font-weight:500; color:#555; margin-bottom:6px; }
+textarea { width:100%; min-height:110px; resize:vertical; font-size:14px; font-family:inherit; padding:12px; border:1.5px solid #e0e0e0; border-radius:8px; background:#fafafa; color:#1a1a1a; outline:none; transition:border-color 0.15s, box-shadow 0.15s; line-height:1.6; }
+textarea:focus { border-color:#0a66c2; background:#fff; box-shadow:0 0 0 3px rgba(10,102,194,0.08); }
+.char-count { font-size:12px; color:#bbb; text-align:right; margin-top:4px; }
+
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:1rem; }
+select { width:100%; padding:10px 12px; font-size:14px; font-family:inherit; border:1.5px solid #e0e0e0; border-radius:8px; background:#fafafa; color:#1a1a1a; outline:none; cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; transition:border-color 0.15s; }
+select:focus { border-color:#0a66c2; }
+
+.btn-generate { width:100%; padding:14px; font-size:15px; font-weight:700; background:#0a66c2; color:#fff; border:none; border-radius:8px; cursor:pointer; margin-top:1.25rem; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn-generate:hover { background:#004182; transform:translateY(-1px); box-shadow:0 6px 16px rgba(10,102,194,0.3); }
+.btn-generate:active { transform:translateY(0); }
+.btn-generate:disabled { background:#a8c4e0; cursor:not-allowed; transform:none; box-shadow:none; }
+
+.skeleton { height:14px; background:#f0f0f0; border-radius:4px; margin-bottom:10px; animation:pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+.loading-label { font-size:13px; color:#888; text-align:center; margin-top:8px; }
+
+.result-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #f0f0f0; }
+.result-label { font-size:13px; font-weight:600; color:#057642; }
+.char-badge { font-size:11px; padding:3px 10px; border-radius:20px; background:#f0f0f0; color:#666; font-weight:500; }
+.result-text { font-size:15px; line-height:1.85; color:#1a1a1a; white-space:pre-wrap; background:#f9fafb; border-radius:8px; padding:1.25rem; border:1px solid #eee; }
+.actions { display:flex; gap:8px; margin-top:1rem; }
+.btn-action { flex:1; padding:10px; font-size:13px; font-weight:600; border:1.5px solid #e0e0e0; border-radius:8px; background:#fff; color:#444; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s; }
+.btn-action:hover { border-color:#0a66c2; color:#0a66c2; background:#f0f6ff; }
+.btn-action.success { border-color:#057642; color:#057642; background:#f0faf4; }
+
+.sidebar { display:flex; flex-direction:column; gap:1rem; }
+.sidebar-sticky { position:sticky; top:72px; display:flex; flex-direction:column; gap:1rem; }
+
+.tips-card { background:#fff; border-radius:12px; padding:1.25rem; border:1px solid #e0e0e0; }
+.tips-card h3 { font-size:14px; font-weight:700; margin-bottom:14px; color:#1a1a1a; }
+.tip { display:flex; gap:10px; margin-bottom:12px; font-size:13px; line-height:1.5; color:#444; align-items:flex-start; }
+.tip:last-child { margin-bottom:0; }
+.tip-dot { width:6px; height:6px; border-radius:50%; background:#0a66c2; flex-shrink:0; margin-top:6px; }
+
+.trust-card { background:#fff; border-radius:12px; padding:1.25rem; border:1px solid #e0e0e0; }
+.trust-card h3 { font-size:14px; font-weight:700; margin-bottom:14px; color:#1a1a1a; }
+.trust-item { display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:13px; color:#444; }
+.trust-item:last-child { margin-bottom:0; }
+.trust-check { width:18px; height:18px; background:#e8f5ee; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; color:#057642; }
+
+.faq { background:#fff; border-radius:12px; padding:1.5rem; border:1px solid #e0e0e0; }
+.faq h2 { font-size:17px; font-weight:700; margin-bottom:1.25rem; }
+.faq-item { border-bottom:1px solid #f5f5f5; padding:1rem 0; cursor:pointer; }
+.faq-item:last-child { border-bottom:none; padding-bottom:0; }
+.faq-q { font-size:14px; font-weight:600; color:#1a1a1a; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.faq-q span { color:#bbb; font-size:18px; transition:transform 0.2s; flex-shrink:0; }
+.faq-a { font-size:13px; color:#555; line-height:1.6; margin-top:8px; display:none; }
+.faq-item.open .faq-a { display:block; }
+.faq-item.open .faq-q span { transform:rotate(45deg); }
+
+.seo-text { background:#fff; border-radius:12px; padding:1.5rem; border:1px solid #e0e0e0; }
+.seo-text h2 { font-size:17px; font-weight:700; margin-bottom:0.75rem; }
+.seo-text p { font-size:13px; color:#555; line-height:1.7; margin-bottom:0.75rem; }
+.seo-text p:last-child { margin-bottom:0; }
+
+.related { background:#fff; border-radius:12px; padding:1.5rem; border:1px solid #e0e0e0; }
+.related h2 { font-size:17px; font-weight:700; margin-bottom:1rem; }
+.related-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.related-item { background:#f9fafb; border:1px solid #e8e8e8; border-radius:8px; padding:1rem; }
+.related-item-icon { font-size:20px; margin-bottom:6px; }
+.related-item-title { font-size:13px; font-weight:600; color:#1a1a1a; margin-bottom:4px; }
+.related-item-desc { font-size:12px; color:#777; line-height:1.4; }
+
+footer { background:#fff; border-top:1px solid #e0e0e0; padding:1.5rem 2rem; text-align:center; font-size:12px; color:#999; margin-top:2rem; }
+footer strong { color:#0a66c2; }
+
+.hidden { display:none; }
+
+@media (max-width:1100px) { .outer { grid-template-columns: 1fr; } .outer-left, .outer-right { display:none; } }
+@media (max-width:680px) { .layout { grid-template-columns:1fr; } .sidebar { display:none; } .grid2 { grid-template-columns:1fr; } .features { grid-template-columns:1fr; } .related-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="6" fill="#0a66c2"/><path d="M7 10.5h3.5V21H7V10.5zm1.75-5.25a2 2 0 110 4 2 2 0 010-4zM12.5 10.5H16v1.4c.6-1 1.8-1.7 3.2-1.7 3.4 0 4 2.2 4 5.1V21h-3.5v-4.9c0-1.2 0-2.7-1.7-2.7s-1.9 1.3-1.9 2.6V21h-3.6V10.5z" fill="white"/></svg>
+    PostIA
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="#como-funciona">Cómo funciona</a>
+    <a class="nav-link" href="#faq">FAQ</a>
+    <span class="nav-badge">✦ 100% Gratis</span>
+  </div>
+</nav>
+
+<!-- AD 1: LEADERBOARD TOP -->
+<div class="ad ad-leaderboard">📢 Google AdSense — 728×90 Leaderboard</div>
+
+<div class="hero">
+  <h1>Genera posts de LinkedIn<br><span>que consiguen engagement</span></h1>
+  <p>Escribe tu idea y la IA crea un post profesional listo para publicar en segundos. Sin registro, sin límites.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">10s</div><div class="stat-label">Tiempo medio</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Tonos</div></div>
+    <div class="stat"><div class="stat-num">8</div><div class="stat-label">Sectores</div></div>
+    <div class="stat"><div class="stat-num">0€</div><div class="stat-label">Coste</div></div>
+  </div>
+</div>
+
+<!-- OUTER GRID: columnas laterales + contenido central -->
+<div class="outer">
+
+  <!-- COLUMNA IZQUIERDA -->
+  <div class="outer-left">
+    <div class="ad ad-skyscraper" style="margin-top:1.5rem;">📢 AdSense<br>160×600<br>Wide Skyscraper</div>
+  </div>
+
+  <!-- CONTENIDO CENTRAL -->
+  <div class="outer-main">
+    <div class="page" style="padding-left:0.5rem; padding-right:0.5rem;">
+
+      <!-- FEATURES -->
+      <div class="features">
+        <div class="feature"><div class="feature-icon">⚡</div><div class="feature-title">Generación instantánea</div><div class="feature-desc">Post listo en menos de 10 segundos</div></div>
+        <div class="feature"><div class="feature-icon">🎯</div><div class="feature-title">Adaptado a tu sector</div><div class="feature-desc">Lenguaje específico de tu industria</div></div>
+        <div class="feature"><div class="feature-icon">📈</div><div class="feature-title">Optimizado para alcance</div><div class="feature-desc">Estructura probada para más engagement</div></div>
+      </div>
+
+      <!-- AD 2: ENTRE FEATURES Y FORMULARIO -->
+      <div class="ad ad-banner-mid" style="margin-bottom:1rem;">📢 Google AdSense — 728×90</div>
+
+      <div class="layout">
+        <div class="main-col">
+
+          <!-- FORM -->
+          <div class="card" id="como-funciona">
+            <div class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#0a66c2"/><path d="M6 9h2.5V18H6V9zm1.25-3.75a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 9h2.3v1c.4-.8 1.4-1.3 2.5-1.3 2.8 0 3.2 1.8 3.2 4.2V18H15v-4.3c0-1 0-2.3-1.4-2.3s-1.6 1.1-1.6 2.2V18H10V9z" fill="white"/></svg>
+              Crea tu post ahora
+            </div>
+            <label for="idea">¿Sobre qué quieres publicar?</label>
+            <textarea id="idea" maxlength="500" placeholder="Ej: Hoy aprendí que delegar no es perder control, sino ganar tiempo para lo que realmente importa..."></textarea>
+            <div class="char-count" id="char-count">0 / 500</div>
+            <div class="grid2">
+              <div>
+                <label for="tono">Tono del post</label>
+                <select id="tono">
+                  <option value="inspiracional">✨ Inspiracional</option>
+                  <option value="educativo" selected>📚 Educativo</option>
+                  <option value="storytelling">📖 Storytelling</option>
+                  <option value="directo y claro">💡 Directo y claro</option>
+                  <option value="reflexivo">🤔 Reflexivo</option>
+                  <option value="provocador">🔥 Provocador</option>
+                </select>
+              </div>
+              <div>
+                <label for="sector">Tu sector (opcional)</label>
+                <select id="sector">
+                  <option value="">— General —</option>
+                  <option value="tecnología">Tecnología</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="emprendimiento">Emprendimiento</option>
+                  <option value="recursos humanos">RRHH</option>
+                  <option value="finanzas">Finanzas</option>
+                  <option value="educación">Educación</option>
+                  <option value="ventas">Ventas</option>
+                  <option value="salud">Salud</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-generate" id="btn-gen" onclick="generarPost()">✦ Generar post con IA</button>
+          </div>
+
+          <!-- LOADING -->
+          <div class="card hidden" id="loading">
+            <div class="skeleton" style="width:50%"></div>
+            <div class="skeleton" style="width:88%"></div>
+            <div class="skeleton" style="width:76%"></div>
+            <div class="skeleton" style="width:65%"></div>
+            <div class="skeleton" style="width:38%"></div>
+            <div class="loading-label">✦ Generando tu post...</div>
+          </div>
+
+          <!-- RESULT -->
+          <div class="card hidden" id="result-card">
+            <div class="result-header">
+              <span class="result-label">✅ Post listo para publicar</span>
+              <span class="char-badge" id="char-badge"></span>
+            </div>
+            <div class="result-text" id="result-text"></div>
+            <div class="actions">
+              <button class="btn-action" id="btn-copy" onclick="copiarPost()">📋 Copiar post</button>
+              <button class="btn-action" onclick="generarPost()">🔄 Regenerar</button>
+            </div>
+            <!-- AD 3: TRAS EL RESULTADO -->
+            <div class="ad ad-inline">📢 Google AdSense — 728×90 (tras resultado)</div>
+          </div>
+
+          <!-- AD 4: MID CONTENT -->
+          <div class="ad ad-banner-mid">📢 Google AdSense — 728×90</div>
+
+          <!-- SEO -->
+          <div class="seo-text">
+            <h2>El generador de posts para LinkedIn más fácil de usar</h2>
+            <p>Crear contenido para LinkedIn de forma constante es uno de los mayores retos para profesionales y emprendedores. Requiere tiempo, inspiración y saber cómo escribir para captar la atención en un feed saturado.</p>
+            <p>PostIA resuelve exactamente ese problema. Gracias a la inteligencia artificial, puedes convertir cualquier idea en un post profesional optimizado para el algoritmo de LinkedIn en cuestión de segundos.</p>
+            <p>Úsalo para impulsar tu marca personal, generar leads, posicionarte como experto en tu sector o simplemente mantener una presencia activa sin esfuerzo.</p>
+          </div>
+
+          <!-- AD 5: ENTRE SEO Y FAQ -->
+          <div class="ad ad-banner-mid">📢 Google AdSense — 728×90</div>
+
+          <!-- FAQ -->
+          <div class="faq" id="faq">
+            <h2>Preguntas frecuentes</h2>
+            <div class="faq-item" onclick="toggleFaq(this)">
+              <div class="faq-q">¿Es gratis el generador de posts? <span>+</span></div>
+              <div class="faq-a">Sí, completamente gratis y sin límite de usos. No necesitas crear una cuenta ni introducir ningún dato de pago.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+              <div class="faq-q">¿LinkedIn detecta si el post es de IA? <span>+</span></div>
+              <div class="faq-a">LinkedIn no penaliza el contenido creado con IA. Te recomendamos revisar y añadir tu toque personal antes de publicar para que suene más auténtico.</div>
+            </div>
+            <!-- AD 6: DENTRO DEL FAQ -->
+            <div class="ad ad-small">📢 Google AdSense — Anuncio en contenido</div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+              <div class="faq-q">¿Qué tono funciona mejor? <span>+</span></div>
+              <div class="faq-a">El storytelling genera más comentarios. El educativo posiciona como experto. El inspiracional consigue más likes. Prueba varios y quédate con el que mejor conecte con tu audiencia.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+              <div class="faq-q">¿Cuántos posts puedo generar? <span>+</span></div>
+              <div class="faq-a">Sin límite. Puedes generar y regenerar tantas veces como necesites hasta conseguir el post perfecto.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+              <div class="faq-q">¿Funciona en español? <span>+</span></div>
+              <div class="faq-a">Sí, PostIA genera todos los posts directamente en español, adaptados al tono y vocabulario profesional del mercado hispanohablante.</div>
+            </div>
+          </div>
+
+          <!-- RELATED -->
+          <div class="related">
+            <h2>También puede interesarte</h2>
+            <div class="related-grid">
+              <div class="related-item"><div class="related-item-icon">✉️</div><div class="related-item-title">Generador de emails</div><div class="related-item-desc">Redacta emails profesionales en segundos</div></div>
+              <div class="related-item"><div class="related-item-icon">📝</div><div class="related-item-title">Reescritor de textos</div><div class="related-item-desc">Mejora cualquier texto con IA</div></div>
+              <div class="related-item"><div class="related-item-icon">🔖</div><div class="related-item-title">Generador de bio</div><div class="related-item-desc">Crea tu biografía profesional perfecta</div></div>
+              <div class="related-item"><div class="related-item-icon">💬</div><div class="related-item-title">Respuestas a comentarios</div><div class="related-item-desc">Responde comentarios de LinkedIn con IA</div></div>
+            </div>
+          </div>
+
+          <!-- AD 7: ANTES DEL FOOTER -->
+          <div class="ad ad-banner-mid">📢 Google AdSense — 728×90</div>
+
+        </div>
+
+        <!-- SIDEBAR DERECHO INTERIOR -->
+        <div class="sidebar">
+          <div class="sidebar-sticky">
+            <!-- AD 8 -->
+            <div class="ad ad-rect">📢 AdSense<br>300×250<br>Medium Rectangle</div>
+            <div class="tips-card">
+              <h3>📈 Consejos para más alcance</h3>
+              <div class="tip"><div class="tip-dot"></div><span>El primer línea es lo más importante. Si no engancha, nadie sigue leyendo.</span></div>
+              <div class="tip"><div class="tip-dot"></div><span>150-200 palabras rinden mejor que posts muy largos.</span></div>
+              <div class="tip"><div class="tip-dot"></div><span>Terminar con una pregunta directa multiplica los comentarios.</span></div>
+              <div class="tip"><div class="tip-dot"></div><span>Publica entre 8-10h o 17-19h de martes a jueves.</span></div>
+              <div class="tip"><div class="tip-dot"></div><span>3-5 hashtags. Más de 5 penaliza el alcance.</span></div>
+            </div>
+            <!-- AD 9 -->
+            <div class="ad ad-rect">📢 AdSense<br>300×250<br>Medium Rectangle</div>
+            <div class="trust-card">
+              <h3>🔒 Por qué confiar en PostIA</h3>
+              <div class="trust-item"><div class="trust-check">✓</div><span>Sin registro ni cuenta</span></div>
+              <div class="trust-item"><div class="trust-check">✓</div><span>No guardamos tus datos</span></div>
+              <div class="trust-item"><div class="trust-check">✓</div><span>IA de última generación</span></div>
+              <div class="trust-item"><div class="trust-check">✓</div><span>100% en español</span></div>
+              <div class="trust-item"><div class="trust-check">✓</div><span>Gratis para siempre</span></div>
+            </div>
+            <!-- AD 10: HALF PAGE -->
+            <div class="ad ad-half-page">📢 AdSense<br>300×600<br>Half Page</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- AD 11: LEADERBOARD BOTTOM -->
+      <div class="ad ad-leaderboard" style="margin-top:0;">📢 Google AdSense — 728×90 Leaderboard</div>
+
+    </div>
+  </div>
+
+  <!-- COLUMNA DERECHA EXTERIOR -->
+  <div class="outer-right">
+    <div class="ad ad-skyscraper" style="margin-top:1.5rem;">📢 AdSense<br>160×600<br>Wide Skyscraper</div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>PostIA</strong> — Generador de posts para LinkedIn con Inteligencia Artificial<br>
+  <span style="margin-top:6px;display:block;">© 2026 · Gratis · Sin registro · Hecho con IA</span>
+</footer>
+
+<script>
+document.getElementById('idea').addEventListener('input', function() {
+  const n = this.value.length;
+  const el = document.getElementById('char-count');
+  el.textContent = n + ' / 500';
+  el.style.color = n > 450 ? '#e24b4a' : '#bbb';
+});
+
+function toggleFaq(el) { el.classList.toggle('open'); }
+
+async function generarPost() {
+  const idea = document.getElementById('idea').value.trim();
+  if (!idea) { document.getElementById('idea').focus(); return; }
+  const tono = document.getElementById('tono').value;
+  const sector = document.getElementById('sector').value;
+  const sectorTexto = sector ? ' El usuario trabaja en el sector de ' + sector + '.' : '';
+  document.getElementById('btn-gen').disabled = true;
+  document.getElementById('loading').classList.remove('hidden');
+  document.getElementById('result-card').classList.add('hidden');
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idea, tono, sectorTexto })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    document.getElementById('result-text').textContent = data.post;
+    document.getElementById('char-badge').textContent = data.post.length + ' caracteres';
+    document.getElementById('result-card').classList.remove('hidden');
+    document.getElementById('result-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } catch(e) {
+    alert('Error al generar el post. Inténtalo de nuevo.');
+    console.error(e);
+  }
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('btn-gen').disabled = false;
+}
+
+function copiarPost() {
+  navigator.clipboard.writeText(document.getElementById('result-text').textContent).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✅ ¡Copiado!';
+    btn.classList.add('success');
+    setTimeout(() => { btn.textContent = '📋 Copiar post'; btn.classList.remove('success'); }, 2500);
+  });
+}
+</script>
+</body>
+</html>
